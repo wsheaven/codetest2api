@@ -1,23 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import Content from './Content.js'
+
+import { useState, useEffect } from 'react';
 
 function App() {
+  
+
+  const [items, setItems] = useState([])
+  const [url, setUrl] = useState("https://jsonplaceholder.typicode.com/users")
+  const [fetchError, setFetchError] = useState(null)
+
+  useEffect(() => {
+    
+    const fetchItems = async () => {
+      try {
+        const response = await fetch(url)
+        if (!response.ok) throw Error("Did not receive data")
+        const listItems = await response.json()
+        setItems(listItems)
+        setFetchError(null)
+      } catch (err) {
+        console.log(err.stack)
+        setFetchError(err.message)
+      } 
+    }
+    (async () => await fetchItems())()
+  }, [url])
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div >
+      <Content
+      items={items}
+      setUrl={setUrl}
+      />
     </div>
   );
 }
